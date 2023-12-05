@@ -54,7 +54,7 @@ class SolutionEvolutionary():
                                       library.books, library.signup_time, library.books_per_day)
                 days_left = max(days_left - library.signup_time, 0)
                 new_library.days_left = days_left
-                new_books = new_library.choose_greedy_books(read)
+                new_books, read = new_library.choose_greedy_books(read)
                 solution.append((new_library, new_books))
             population.append((solution, self.problem.evaluate(solution)))
         return population

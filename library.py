@@ -3,16 +3,14 @@ import numpy as np
 
 
 class Library:
-
-    days_left = None
-    unique_books = set()
-
     def __init__(self, id, number_of_books, books, signup_time, books_per_day):
         self.id = id
         self.number_of_books = number_of_books
         self.books = books
         self.signup_time = signup_time
         self.books_per_day = books_per_day
+        self.days_left = None
+        self.unique_books = set()
 
     def choose_random_books(self):
         if self.days_left == 0:
@@ -22,19 +20,14 @@ class Library:
         return books
 
     def choose_greedy_books(self, read):
-        chosen = set()
         if self.days_left == 0:
-            return set()
+            return set(), read
 
-        books = sorted(list(self.books), key=lambda x: x.score, reverse=True)
-        for book in books:
-            if len(chosen) == self.days_left*self.books_per_day:
-                return chosen
-
-            if book not in read:
-                chosen.add(book)
-                read.add(book)
-        return chosen
+        books = sorted((book for book in self.books if book not in read),
+                       key=lambda x: x.score, reverse=True)
+        chosen = set(books[:self.days_left*self.books_per_day])
+        read.update(chosen)
+        return chosen, read
 
     def mutate_books(self, chosen_books):
         if len(chosen_books) == self.number_of_books or len(chosen_books) == 0:
