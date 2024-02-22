@@ -10,7 +10,7 @@ evaluation = 0
 start_time = time.time()
 
 for name in names:
-    with open(f"{name}.txt", "r") as f_in:
+    with open(f"data/{name}.txt", "r") as f_in:
         lines = f_in.read().splitlines()
 
     _, number_of_libraries, number_of_days = map(int, lines.pop(0).split())
