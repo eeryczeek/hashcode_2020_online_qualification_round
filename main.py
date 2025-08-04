@@ -1,6 +1,6 @@
 import time
 from parser import Parser
-from solution import SolutionEvolutionary
+from problem import get_greedy_solution
 
 inputs = [
     "a_example",
@@ -12,16 +12,10 @@ inputs = [
 ]
 evaluation = 0
 start_time = time.time()
-
 for name in inputs:
     hashcode_problem = Parser.readHashcodeProblem(f"data/{name}.txt")
-    solution = SolutionEvolutionary(hashcode_problem)
-
-    best_solution, eval, execution_time = solution.initialize_greedy_solution(
-        start_time
-    )
-    print(f"{name}: {eval}")
-    evaluation += eval
+    best_solution = get_greedy_solution(hashcode_problem)
+    evaluation += hashcode_problem.evaluate(best_solution)
 
 print(f"time: {time.time() - start_time}")
 print(evaluation)
