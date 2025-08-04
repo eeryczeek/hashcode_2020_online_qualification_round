@@ -1,28 +1,26 @@
-import numpy as np
-from library import Library
+from dataclasses import dataclass
+from typing import List, Set
+from dtos import Book, Library, Solution
 
 
-class HashcodeProblem():
-    def __init__(self, days, number_of_libraries, libraries, books):
-        self.days = days
-        self.number_of_libraries = number_of_libraries
-        self.libraries = libraries
-        self.books = books
+@dataclass
+class HashcodeProblem:
+    books_number: int
+    libraries_number: int
+    days_number: int
+    libraries: List[Library]
+    books: tuple[Book, ...]
 
-    def random_solution(self):
-        solution = []
-        days_left = self.days
-        for library in np.random.permutation(self.libraries):
-            new_library = Library(library.id, library.number_of_books,
-                                  library.books, library.signup_time, library.books_per_day)
-            days_left = max(days_left - library.signup_time, 0)
-            new_library.days_left = days_left
-            new_books = new_library.choose_random_books()
-            solution.append((new_library, new_books))
-        return solution
+    def evaluate2(self, solution: Solution) -> int:
+        shared_set_of_books: Set[Book] = set()
+        for library in solution.libraries:
+            selected_books = [
+                book
+                for book in library.selected_books
+                if book not in shared_set_of_books
+            ]
+            shared_set_of_books.update(
+                selected_books[: library.days_left * library.books_per_day]
+            )
 
-    def evaluate(self, solution) -> int:
-        set_of_books = set()
-        for library, books in solution:
-            set_of_books.update(books)
-        return sum(book.score for book in set_of_books)
+        return sum(book.score for book in shared_set_of_books)
